@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/pages/modelo.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="formListagem">
+			<p:panel header="Cadastro de Usuários">
+				<br></br>
+				<p:outputLabel value="Digite sua Pesquisa: " />
+				<p:inputText id="textoPesquisa" maxlength="65" size="65"
+					value="#{usuarioBean.busca}" />
+
+				<p:commandButton id="bitPesquisar" style="margin:10px"
+					value="Pesquisar" icon="fa fa fw fa-search"
+					actionListener="#{usuarioBean.pesquisar}"
+					update="formListagem:tabela :formListagem:tool"
+					onstart="PF('iconeDeProcessamento').show()"
+					onsuccess="PF('iconeDeProcessamento').hide()" />
+				<br></br>
+				<br></br>
+
+				<p:growl id="messages" showDetail="true" />
+				<p:toolbar id="tool">
+					<f:facet name="left">
+						<p:commandButton value="Novo" oncomplete="PF('dialogo').show();"
+							icon="ui-icon-document" actionListener="#{usuarioBean.novo}"
+							update=":formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+
+						<p:commandButton value="Editar" process=":formListagem:tabela"
+							update=":formCadastro:painel" icon="fa fa-fw fa-edit"
+							disabled="#{usuarioBean.usuario == null}"
+							oncomplete="PF('dialogo').show();">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+
+						<span class="ui-separator"> <span
+							class="ui-icon ui-icon-grip-dotted-vertical" />
+						</span>
+
+						<p:commandButton title="Excluir" icon="ui-icon-trash"
+							actionListener="#{usuarioBean.excluir}"
+							disabled="#{usuarioBean.usuario == null}"
+							update=":formListagem:tabela"
+							onstart="PF('iconeDeProcessamento').show()"
+							onsuccess="PF('iconeDeProcessamento').hide()">
+							<p:confirm header="Confirmação"
+								message="Deseja Excluir este Registro?" icon="ui-icon-alert" />
+							<f:attribute name="usuarioSelecionado" value="#{usuario}" />
+						</p:commandButton>
+
+						<p:commandButton title="Imprimir" icon="ui-icon-print">
+							<p:printer target=":formListagem:tabela" />
+						</p:commandButton>
+					</f:facet>
+
+					<f:facet name="right">
+						<p:menuButton value="Opções" style="margin:0 10px 0 10px">
+							<p:menuitem value="Exportar Excel" icon="fa fa-fw fa-download"
+								ajax="false">
+								<p:dataExporter type="xls" target="tabela" fileName="usuario" />
+							</p:menuitem>
+
+							<p:menuitem value="Exportar PDF" icon="fa fa-fw fa-download"
+								ajax="false">
+								<p:dataExporter type="pdf" target="tabela" fileName="usuario" />
+							</p:menuitem>
+
+							<p:menuitem value="Exportar XML" icon="fa fa-fw fa-download"
+								ajax="false">
+								<p:dataExporter type="xml" target="tabela" fileName="usuario" />
+							</p:menuitem>
+
+							<p:menuitem value="Página Inicial" url="#" icon="ui-icon-extlink" />
+						</p:menuButton>
+
+						<p:commandButton id="coluna" type="button" value="Colunas"
+							style="float:right" icon="ui-icon-calculator" />
+						<p:columnToggler datasource=":formListagem:tabela"
+							trigger="coluna" />
+					</f:facet>
+				</p:toolbar>
+
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					selectionMode="single" selection="#{usuarioBean.usuario}"
+					draggableColumns="true" resizableColumns="true"
+					rowKey="#{usuario.codigo}" paginator="true"
+					rowsPerPageTemplate="5,10,20,30,40,50,100,150,200,250,300,350,400,450,500,1000"
+					value="#{usuarioBean.usuarios}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					var="usuario" rows="10" paginatorPosition="bottom">
+
+					<p:ajax event="rowUnselect"
+						update=":formListagem:messages :formListagem:tool"
+						listener="#{usuarioBean.onRowUnselect}" />
+
+					<p:ajax event="rowSelect"
+						update=":formListagem:messages :formListagem:tool"
+						listener="#{usuarioBean.onRowSelect}" />					
+
+					<p:column headerText="Nome" sortBy="#{usuario.nome}">
+						<h:outputText value="#{usuario.nome}" />
+					</p:column>
+
+					<p:column headerText="E-mail" sortBy="#{usuario.email}" width="250">
+						<h:outputText value="#{usuario.email}" />
+					</p:column>
+					
+					<p:column headerText="Ativo" sortBy="#{usuario.ativoFormatado}"
+						style="text-align:center" width="70">
+						<h:outputText value="#{usuario.ativoFormatado}" />
+					</p:column>
+
+					<p:column headerText="Senha" width="45">
+						<p:commandButton icon="fa fa-fw fa-key"
+							actionListener="#{usuarioBean.editarSenha}"
+							update=":formSenha:painelSenha"
+							oncomplete="PF('dialogoSenha').show();">
+							<f:attribute name="usuarioSelecionado" value="#{usuario}" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+
+		</h:form>
+
+		<p:dialog widgetVar="iconeDeProcessamento">
+			<f:facet name="header">
+				<h:graphicImage value="/imagens/ampulheta.png" />
+				<h:outputText id="dialogHeader"
+					value="Aguarde... Estamos Processando sua Informação..." />
+			</f:facet>
+		</p:dialog>
+
+		<p:dialog header="Cadastro de Usuário" widgetVar="dialogo"
+			draggable="false" resizable="false" closable="true">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2" class="ui-noborder">
+					<p:outputLabel for="nome" value="Nome " />
+					<p:inputText id="nome" maxlength="100" size="43" required="true"
+						requiredMessage="Campo Obrigatório"
+						value="#{usuarioBean.usuario.nome}" />
+
+					<p:outputLabel for="email" value="E-mail " />
+					<p:inputText id="email" maxlength="100" size="43" required="true"
+						value="#{usuarioBean.usuario.email}" />
+
+
+					<p:outputLabel for="acesso" value="Acesso " />
+					<h:panelGroup>
+						<p:selectOneMenu id="acesso" filter="true"
+							value="#{usuarioBean.usuario.acesso}" required="true"
+							requiredMessage="O campo 'Acesso' é obrigatório"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItem noSelectionOption="true"
+								itemLabel="Nenhum Registro Selecionado" />
+							<f:selectItems value="#{usuarioBean.acessos}" var="acesso"
+								itemValue="#{acesso}" itemLabel="#{acesso.nome}" />
+						</p:selectOneMenu>
+					</h:panelGroup>
+					
+					<p:outputLabel for="ativo" value="Ativo" />
+					<p:selectBooleanCheckbox id="ativo"
+						value="#{usuarioBean.usuario.ativo}" required="true"
+						requiredMessage="O campo 'Ativo' é obrigatório" />
+						
+					<p:outputLabel for="administrador" value="Administrador" />
+					<p:selectBooleanCheckbox id="administrador"
+						value="#{usuarioBean.usuario.administrador}" required="true"
+						requiredMessage="O campo 'Administrador' é obrigatório" />						
+				</h:panelGrid>
+
+				<br></br>
+				<p:separator />
+
+				<h:panelGrid columns="3">
+					<p:commandButton value="Salvar" icon="ui-icon-disk"
+						actionListener="#{usuarioBean.salvar}"
+						update=":formCadastro:painel :formListagem:tabela :formListagem:tool"
+						onstart="PF('iconeDeProcessamento').show()"
+						onsuccess="PF('iconeDeProcessamento').hide()" />
+
+					<p:commandButton value="Fechar" icon="fa fa-fw fa-close"
+						oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	
+		<p:dialog header="Senha" widgetVar="dialogoSenha" draggable="false"
+			resizable="false" closable="true">
+			<h:form id="formSenha">
+				<h:panelGrid id="painelSenha" columns="3" class="ui-noborder">
+					<p:outputLabel for="senha" value="Senha:" />
+					<p:password id="senha" maxlength="100" size="35"
+						value="#{usuarioBean.usuario.senhaSemCriptografia}"
+						required="true" requiredMessage="O campo 'Senha' é obrigatório">
+					</p:password>
+				</h:panelGrid>
+
+				<br></br>
+				<p:separator />
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar" icon="ui-icon-disk"
+						actionListener="#{usuarioBean.salvarSenha}"
+						update=":formSenha:painelSenha"
+						onstart="PF('iconeDeProcessamento').show()"
+						onsuccess="PF('iconeDeProcessamento').hide()" />
+
+					<p:commandButton value="Fechar" icon="fa fa-fw fa-close"
+						oncomplete="PF('dialogoSenha').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Cadastro de Acesso" widgetVar="dialogoAcesso"
+			draggable="false" resizable="false" closable="true">
+			<h:form id="formCadastroAcesso">
+				<h:panelGrid id="painelAcesso" columns="2" class="ui-noborder">
+					<p:outputLabel for="nome" value="Nome: " />
+					<p:inputText id="nome" maxlength="100" size="60" required="true"
+						requiredMessage="Campo Obrigatório"
+						value="#{usuarioBean.acesso.nome}" />
+
+				</h:panelGrid>
+
+				<br></br>
+
+				<p:tabView id="tabView">
+					<p:tab title="Sistema">
+						<h:panelGrid id="painelSistema" columns="2" class="ui-noborder">
+
+							<p:outputLabel value="Acesso" />
+							<p:selectBooleanCheckbox value="#{usuarioBean.acesso.acesso}" />
+
+							<p:outputLabel value="Usuário" />
+							<p:selectBooleanCheckbox value="#{usuarioBean.acesso.usuario}" />
+
+						</h:panelGrid>
+					</p:tab>
+				</p:tabView>
+
+
+				<br></br>
+				<p:separator />
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar" icon="ui-icon-disk"
+						actionListener="#{usuarioBean.salvarAcesso}"
+						update=":formCadastroAcesso:painelAcesso :formListagem:tabela :formListagem:tool"
+						onstart="PF('iconeDeProcessamento').show()"
+						onsuccess="PF('iconeDeProcessamento').hide()" />
+
+					<p:commandButton value="Fechar" icon="fa fa-fw fa-close"
+						oncomplete="PF('dialogoAcesso').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Pesquisa de Acesso" width="800" height="600"
+			widgetVar="dialogoPesqAcesso" draggable="false" resizable="false"
+			closable="true">
+			<h:form id="formPesqAcesso">
+
+				<div style="margin-top: 5px; margin-bottom: 20px">
+					<p:inputText id="nome" size="45" value="#{usuarioBean.buscaAcesso}"
+						placeholder="Informe o Nome do Acesso" />
+
+					<p:spacer width="10px" />
+
+					<p:commandButton value="Pesquisar" icon="fa fa fw fa-search"
+						onstart="PF('iconeDeProcessamento').show()"
+						onsuccess="PF('iconeDeProcessamento').hide()"
+						action="#{usuarioBean.pesquisarAcesso}" update="tabelaAcesso" />
+				</div>
+
+				<p:dataTable id="tabelaAcesso" value="#{usuarioBean.acessos}"
+					selection="#{usuarioBean.acesso}" selectionMode="single"
+					draggableColumns="true" resizableColumns="true"
+					rowKey="#{acesso.codigo}" var="acesso"
+					emptyMessage="Nenhum Registro Encontrado." rows="10"
+					paginator="true" paginatorAlwaysVisible="false"
+					paginatorPosition="bottom">
+
+					<p:ajax event="rowDblselect"
+						listener="#{usuarioBean.duploCliqueAcesso}"
+						update=":formCadastro:acesso" />
+
+					<p:column headerText="Nome">
+						<h:outputText value="#{acesso.nome}" />
+					</p:column>
+
+					<p:column style="width: 30px; text-align: center">
+						<p:commandButton icon="ui-icon-check" title="Selecionar"
+							actionListener="#{usuarioBean.selecionarAcesso}"
+							update=":formCadastro:acesso">
+							<f:attribute name="acessoSelecionado" value="#{acesso}" />
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

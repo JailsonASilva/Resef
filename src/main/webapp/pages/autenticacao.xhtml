@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Resef - Autenticação</title>
+	<h:outputStylesheet library="algaworks" name="estilo.css" />
+	<h:outputStylesheet library="webjars" name="/css/font-awesome.min.css" />
+	<h:outputScript library="js" name="scripts.js" />
+	<h:outputScript library="js" name="fecharDialogo.js" />
+</h:head>
+<h:body>
+	<p:growl id="mensagem" />
+
+
+	<div>
+		<p:layout fullPage="true">
+
+			<p:layoutUnit position="north" size="110" resizable="true"
+				closable="true" collapsible="true" style="border:none;">
+
+				<p:panel header="Resef - Sistema de Recrutamento e Seleção">
+					<h:graphicImage url="/imagens/educa.png" width="111" height="42" />
+				</p:panel>
+
+			</p:layoutUnit>
+
+			<div align="center">
+				<p:layoutUnit position="south" size="50" resizable="true"
+					closable="true" collapsible="true">
+
+					<h:outputText
+						value="Faculdade de Ciências e Tecnologia do Maranhão." />
+					<br></br>
+					<h:outputText value="Tecnologia da Informação." />
+
+				</p:layoutUnit>
+			</div>
+
+			<p:layoutUnit position="center" style="border:none;" size="400">
+				<p:dialog header="Autenticação" closable="false" draggable="false"  
+					height="160" width="310" resizable="false" modal="false"
+					visible="true">
+					<h:form>
+						<h:panelGrid columns="1">
+							<p:outputLabel for="email" value="E-mail" />
+							<p:inputMask id="email" required="true" size="35"
+								requiredMessage="O campo E-mail é obrigatório"
+								value="#{autenticacaoBean.usuario.email}" />
+
+							<p:outputLabel for="senha" value="Senha" />
+							<p:password id="senha" maxlength="100" size="35" required="true"
+								requiredMessage="O campo Senha é obrigatório"
+								value="#{autenticacaoBean.usuario.senha}" />
+						</h:panelGrid>
+
+						<p:separator />
+
+						<h:panelGrid columns="1">
+							<p:commandButton value="Autenticar" update=":mensagem"
+								actionListener="#{autenticacaoBean.autenticar}"
+								onstart="PF('iconeDeProcessamento').show()"
+								onsuccess="PF('iconeDeProcessamento').hide()" />
+						</h:panelGrid>
+
+						<p:dialog widgetVar="iconeDeProcessamento">
+							<f:facet name="header">
+								<h:graphicImage value="/imagens/ampulheta.png" />
+								<h:outputText id="dialogHeader"
+									value="Aguarde... Estamos Processando sua Informação..." />
+							</f:facet>
+						</p:dialog>
+
+					</h:form>
+				</p:dialog>
+			</p:layoutUnit>
+
+		</p:layout>
+	</div>
+
+</h:body>
+</html>
