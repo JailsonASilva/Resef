@@ -98,6 +98,10 @@
 					value="#{usuarioBean.usuarios}"
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 					var="usuario" rows="10" paginatorPosition="bottom">
+					
+					<p:ajax event="rowDblselect"
+						listener="#{usuarioBean.duploClique}" 
+						update="formCadastro:painel" />							
 
 					<p:ajax event="rowUnselect"
 						update=":formListagem:messages :formListagem:tool"

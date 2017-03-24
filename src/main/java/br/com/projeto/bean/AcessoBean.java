@@ -87,6 +87,19 @@ public class AcessoBean implements Serializable {
 		acesso = new Acesso();
 	}
 
+	public void duploClique(SelectEvent evento) {
+		try {
+			org.primefaces.context.RequestContext.getCurrentInstance().execute("PF('dialogo').show();");
+
+		} catch (RuntimeException erro) {
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocorreu um Erro ao Tentar Selecionar Registro.",
+					"Erro Inesperado!");
+
+			RequestContext.getCurrentInstance().showMessageInDialog(message);
+			erro.printStackTrace();
+		}
+	}
+	
 	public void salvar() {
 		try {
 			AcessoDAO acessoDAO = new AcessoDAO();

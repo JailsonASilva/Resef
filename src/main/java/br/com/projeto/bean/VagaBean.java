@@ -1,3 +1,4 @@
+
 package br.com.projeto.bean;
 
 import java.io.Serializable;
@@ -151,6 +152,19 @@ public class VagaBean implements Serializable {
 		vaga.setAtivo(true);
 	}
 
+	public void duploClique(SelectEvent evento) {
+		try {
+			org.primefaces.context.RequestContext.getCurrentInstance().execute("PF('dialogo').show();");
+
+		} catch (RuntimeException erro) {
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocorreu um Erro ao Tentar Selecionar Registro.",
+					"Erro Inesperado!");
+
+			RequestContext.getCurrentInstance().showMessageInDialog(message);
+			erro.printStackTrace();
+		}
+	}
+
 	public void salvar() {
 		try {
 			VagaDAO vagaDAO = new VagaDAO();
@@ -220,7 +234,7 @@ public class VagaBean implements Serializable {
 
 	public void novoVinculoPerfil() {
 		vagaPerfil = new VagaPerfil();
-		
+
 		vagaPerfil.setVaga(vaga);
 		vagaPerfil.setAtivo(true);
 	}
@@ -264,7 +278,7 @@ public class VagaBean implements Serializable {
 			erro.printStackTrace();
 		}
 	}
-	
+
 	public void editarVagaPerfil(ActionEvent evento) {
 		try {
 			vagaPerfil = (VagaPerfil) evento.getComponent().getAttributes().get("vagaPerfilSelecionado");
@@ -277,13 +291,13 @@ public class VagaBean implements Serializable {
 			erro.printStackTrace();
 		}
 	}
-	
+
 	public void excluirVagaPerfil(ActionEvent evento) {
 		try {
 			vagaPerfil = (VagaPerfil) evento.getComponent().getAttributes().get("vagaPerfilSelecionado");
 
 			VagaPerfilDAO vagaPerfilDAO = new VagaPerfilDAO();
-			vagaPerfilDAO.excluir(vagaPerfil);			
+			vagaPerfilDAO.excluir(vagaPerfil);
 
 			message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Registro Excluído com Sucesso!",
 					"Perfil Excluído: " + vagaPerfil.getPerfil().getNome());
@@ -301,5 +315,5 @@ public class VagaBean implements Serializable {
 			RequestContext.getCurrentInstance().showMessageInDialog(message);
 			erro.printStackTrace();
 		}
-	}	
+	}
 }

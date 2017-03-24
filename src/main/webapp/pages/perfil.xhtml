@@ -98,6 +98,10 @@
 					value="#{perfilBean.perfis}"
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 					var="perfil" rows="10" paginatorPosition="bottom">
+					
+					<p:ajax event="rowDblselect"
+						listener="#{perfilBean.duploClique}" 
+						update="formCadastro:painel" />							
 
 					<p:ajax event="rowUnselect"
 						update=":formListagem:messages :formListagem:tool"

@@ -29,7 +29,10 @@
 								rendered="#{autenticacaoBean.usuarioLogado.acesso.usuario}" />
 						</p:submenu>
 
-						<p:submenu label="RH" icon="fa fa fw fa-user">
+						<p:submenu label="Cadastros" icon="fa fa fw fa-user">
+							<p:menuitem value="Currículo" url="/pages/curriculo.xhtml"
+								rendered="#{autenticacaoBean.usuarioLogado.acesso.curriculo}" />
+
 							<p:menuitem value="Perfil Profissional" url="/pages/perfil.xhtml"
 								rendered="#{autenticacaoBean.usuarioLogado.acesso.perfil}" />
 
@@ -38,6 +41,18 @@
 						</p:submenu>
 
 						<f:facet name="options">
+							<p:commandButton icon="fa fa fw fa-user"
+								title="Cadastro de Currículo" action="#{atalhosBean.curriculo}"
+								rendered="#{autenticacaoBean.usuarioLogado.acesso.curriculo}" />
+
+							<p:commandButton icon="fa fa fw fa-user-md"
+								title="Cadastro de Perfil" action="#{atalhosBean.perfil}"
+								rendered="#{autenticacaoBean.usuarioLogado.acesso.perfil}" />
+
+							<p:commandButton icon="fa fa fw fa-calendar"
+								title="Cadastro de Vaga" action="#{atalhosBean.vaga}"
+								rendered="#{autenticacaoBean.usuarioLogado.acesso.vaga}" />
+
 							<p:commandButton value="Desconectar"
 								actionListener="#{autenticacaoBean.desconectar}"
 								icon="ui-icon-extlink" />

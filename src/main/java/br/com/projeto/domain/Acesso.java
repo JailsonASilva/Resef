@@ -25,7 +25,7 @@ public class Acesso extends GenericDomain {
 
 	@Column(nullable = true)
 	private Boolean curriculo;
-
+	
 	public String getNome() {
 		return nome;
 	}

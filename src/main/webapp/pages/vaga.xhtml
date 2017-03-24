@@ -97,6 +97,10 @@
 					value="#{vagaBean.vagas}"
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 					var="vaga" rows="10" paginatorPosition="bottom">
+					
+					<p:ajax event="rowDblselect"
+						listener="#{vagaBean.duploClique}" 
+						update="formCadastro:painel" />					
 
 					<p:ajax event="rowUnselect"
 						update=":formListagem:messages :formListagem:tool"
