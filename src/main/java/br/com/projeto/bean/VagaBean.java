@@ -14,9 +14,11 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 
+import br.com.projeto.dao.EtapaDAO;
 import br.com.projeto.dao.PerfilDAO;
 import br.com.projeto.dao.VagaDAO;
 import br.com.projeto.dao.VagaPerfilDAO;
+import br.com.projeto.domain.Etapa;
 import br.com.projeto.domain.Perfil;
 import br.com.projeto.domain.Vaga;
 import br.com.projeto.domain.VagaPerfil;
@@ -30,6 +32,9 @@ public class VagaBean implements Serializable {
 
 	private Perfil perfil;
 	private List<Perfil> perfis;
+
+	private Etapa etapa;
+	private List<Etapa> etapas;
 
 	private VagaPerfil vagaPerfil;
 	private List<VagaPerfil> vagasPerfis;
@@ -101,6 +106,22 @@ public class VagaBean implements Serializable {
 		this.vagasPerfis = vagasPerfis;
 	}
 
+	public Etapa getEtapa() {
+		return etapa;
+	}
+
+	public void setEtapa(Etapa etapa) {
+		this.etapa = etapa;
+	}
+
+	public List<Etapa> getEtapas() {
+		return etapas;
+	}
+
+	public void setEtapas(List<Etapa> etapas) {
+		this.etapas = etapas;
+	}
+
 	@PostConstruct
 	public void inicializar() {
 		try {
@@ -108,6 +129,11 @@ public class VagaBean implements Serializable {
 			perfis = perfilDAO.listar("nome");
 
 			perfil = new Perfil();
+
+			EtapaDAO etapaDAO = new EtapaDAO();
+			etapas = etapaDAO.listar("nome");
+
+			etapa = new Etapa();
 
 		} catch (
 
@@ -269,6 +295,26 @@ public class VagaBean implements Serializable {
 			perfis = perfilDAO.listar("nome");
 
 			perfil = new Perfil();
+
+		} catch (RuntimeException erro) {
+			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocorreu um Erro ao Tentar Salvar este Registro.",
+					"Erro: " + erro.getMessage());
+
+			RequestContext.getCurrentInstance().showMessageInDialog(message);
+			erro.printStackTrace();
+		}
+	}
+
+	public void salvarEtapa() {
+		try {
+			EtapaDAO etapaDAO = new EtapaDAO();
+			etapaDAO.merge(etapa);
+
+			org.primefaces.context.RequestContext.getCurrentInstance().execute("PF('dialogoEtapa').hide();");
+
+			etapas = etapaDAO.listar("nome");
+
+			etapa = new Etapa();
 
 		} catch (RuntimeException erro) {
 			message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocorreu um Erro ao Tentar Salvar este Registro.",

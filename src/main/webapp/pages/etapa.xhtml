@@ -10,19 +10,18 @@
 
 	<ui:define name="conteudo">
 		<h:form id="formListagem">
-			<p:panel header="Cadastro de Acessos">
+			<p:panel header="Cadastro de Etapa">
 				<br></br>
 				<p:outputLabel value="Digite sua Pesquisa: " />
 				<p:inputText id="textoPesquisa" maxlength="65" size="65"
-					value="#{acessoBean.busca}" />
+					value="#{etapaBean.busca}" />
 
 				<p:commandButton id="bitPesquisar" style="margin:10px"
-					value="Pesquisar" icon="ui-icon-script"
-					actionListener="#{acessoBean.pesquisar}"
-					update="formListagem:tabela :formListagem:tool :formListagem:messages"
+					value="Pesquisar" icon="fa fa fw fa-search"
+					actionListener="#{etapaBean.pesquisar}"
+					update="formListagem:tabela :formListagem:tool"
 					onstart="PF('iconeDeProcessamento').show()"
 					onsuccess="PF('iconeDeProcessamento').hide()" />
-
 				<br></br>
 				<br></br>
 
@@ -30,16 +29,16 @@
 				<p:toolbar id="tool">
 					<f:facet name="left">
 						<p:commandButton value="Novo" oncomplete="PF('dialogo').show();"
-							icon="ui-icon-document" actionListener="#{acessoBean.novo}"
-							update=":formCadastro:painel :formCadastro:tabView:painelSistema">
+							icon="ui-icon-document" actionListener="#{etapaBean.novo}"
+							update=":formCadastro:painel">
 							<f:actionListener
 								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 						</p:commandButton>
 
 						<p:commandButton value="Editar" process=":formListagem:tabela"
-							disabled="#{acessoBean.acesso == null}"
-							update=":formCadastro:painel :formCadastro:tabView:painelSistema :formCadastro:tabView:painelRH"
-							icon="fa fa-fw fa-edit" oncomplete="PF('dialogo').show();">
+							update=":formCadastro:painel" icon="fa fa-fw fa-edit"
+							disabled="#{etapaBean.etapa == null}"
+							oncomplete="PF('dialogo').show();">
 							<f:actionListener
 								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 						</p:commandButton>
@@ -49,14 +48,14 @@
 						</span>
 
 						<p:commandButton title="Excluir" icon="ui-icon-trash"
-							actionListener="#{acessoBean.excluir}"
-							disabled="#{acessoBean.acesso == null}"
-							update=":formListagem:tabela :formListagem:tool"
+							actionListener="#{etapaBean.excluir}"
+							disabled="#{etapaBean.etapa == null}"
+							update=":formListagem:tabela"
 							onstart="PF('iconeDeProcessamento').show()"
 							onsuccess="PF('iconeDeProcessamento').hide()">
 							<p:confirm header="Confirmação"
 								message="Deseja Excluir este Registro?" icon="ui-icon-alert" />
-							<f:attribute name="acessoSelecionado" value="#{acesso}" />
+							<f:attribute name="etapaSelecionado" value="#{etapa}" />
 						</p:commandButton>
 
 						<p:commandButton title="Imprimir" icon="ui-icon-print">
@@ -68,21 +67,20 @@
 						<p:menuButton value="Opções" style="margin:0 10px 0 10px">
 							<p:menuitem value="Exportar Excel" icon="fa fa-fw fa-download"
 								ajax="false">
-								<p:dataExporter type="xls" target="tabela" fileName="acesso" />
+								<p:dataExporter type="xls" target="tabela" fileName="etapa" />
 							</p:menuitem>
 
 							<p:menuitem value="Exportar PDF" icon="fa fa-fw fa-download"
 								ajax="false">
-								<p:dataExporter type="pdf" target="tabela" fileName="acesso" />
+								<p:dataExporter type="pdf" target="tabela" fileName="etapa" />
 							</p:menuitem>
 
 							<p:menuitem value="Exportar XML" icon="fa fa-fw fa-download"
 								ajax="false">
-								<p:dataExporter type="xml" target="tabela" fileName="acesso" />
+								<p:dataExporter type="xml" target="tabela" fileName="etapa" />
 							</p:menuitem>
 
-							<p:menuitem value="Página Inicial" url="/pages/principal.xhtml"
-								icon="ui-icon-extlink" />
+							<p:menuitem value="Página Inicial" url="#" icon="ui-icon-extlink" />
 						</p:menuButton>
 
 						<p:commandButton id="coluna" type="button" value="Colunas"
@@ -93,27 +91,27 @@
 				</p:toolbar>
 
 				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
-					selectionMode="single" selection="#{acessoBean.acesso}"
+					selectionMode="single" selection="#{etapaBean.etapa}"
 					draggableColumns="true" resizableColumns="true"
-					rowKey="#{acesso.codigo}" paginator="true"
+					rowKey="#{etapa.codigo}" paginator="true"
 					rowsPerPageTemplate="5,10,20,30,40,50,100,150,200,250,300,350,400,450,500,1000"
-					value="#{acessoBean.acessos}"
+					value="#{etapaBean.etapas}"
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-					var="acesso" rows="10" paginatorPosition="bottom">
+					var="etapa" rows="10" paginatorPosition="bottom">
 
-					<p:ajax event="rowDblselect" listener="#{acessoBean.duploClique}"
+					<p:ajax event="rowDblselect" listener="#{etapaBean.duploClique}"
 						update="formCadastro:painel" />
 
 					<p:ajax event="rowUnselect"
 						update=":formListagem:messages :formListagem:tool"
-						listener="#{acessoBean.onRowUnselect}" />
+						listener="#{etapaBean.onRowUnselect}" />
 
 					<p:ajax event="rowSelect"
 						update=":formListagem:messages :formListagem:tool"
-						listener="#{acessoBean.onRowSelect}" /> />							
+						listener="#{etapaBean.onRowSelect}" />
 
-					<p:column headerText="Nome" sortBy="#{acesso.nome}">
-						<h:outputText value="#{acesso.nome}" />
+					<p:column headerText="Nome" sortBy="#{etapa.nome}">
+						<h:outputText value="#{etapa.nome}" />
 					</p:column>
 				</p:dataTable>
 
@@ -135,59 +133,23 @@
 			</f:facet>
 		</p:dialog>
 
-		<p:dialog header="Cadastro de Acesso" widgetVar="dialogo"
+		<p:dialog header="Cadastro de Etapa" widgetVar="dialogo"
 			draggable="false" resizable="false" closable="true">
 			<h:form id="formCadastro">
 				<h:panelGrid id="painel" columns="2" class="ui-noborder">
-					<p:outputLabel for="nome" value="Nome: " />
+					<p:outputLabel for="nome" value="Nome " />
 					<p:inputText id="nome" maxlength="100" size="60" required="true"
 						requiredMessage="Campo Obrigatório"
-						value="#{acessoBean.acesso.nome}" />
-
+						value="#{etapaBean.etapa.nome}" />
 				</h:panelGrid>
-
-				<br></br>
-
-				<p:tabView id="tabView">
-					<p:tab title="Sistema">
-						<h:panelGrid id="painelSistema" columns="2" class="ui-noborder">
-
-							<p:outputLabel value="Acesso" />
-							<p:selectBooleanCheckbox value="#{acessoBean.acesso.acesso}" />
-
-							<p:outputLabel value="Usuário" />
-							<p:selectBooleanCheckbox value="#{acessoBean.acesso.usuario}" />
-
-						</h:panelGrid>
-					</p:tab>
-
-					<p:tab title="RH">
-						<h:panelGrid id="painelRH" columns="2" class="ui-noborder">
-
-							<p:outputLabel value="Perfil Profissional " />
-							<p:selectBooleanCheckbox value="#{acessoBean.acesso.perfil}" />
-
-							<p:outputLabel value="Etapa" />
-							<p:selectBooleanCheckbox value="#{acessoBean.acesso.etapa}" />
-
-							<p:outputLabel value="Vaga" />
-							<p:selectBooleanCheckbox value="#{acessoBean.acesso.vaga}" />
-
-							<p:outputLabel value="Currículo" />
-							<p:selectBooleanCheckbox value="#{acessoBean.acesso.curriculo}" />
-
-						</h:panelGrid>
-					</p:tab>
-				</p:tabView>
-
 
 				<br></br>
 				<p:separator />
 
-				<h:panelGrid columns="2">
+				<h:panelGrid columns="3">
 					<p:commandButton value="Salvar" icon="ui-icon-disk"
-						actionListener="#{acessoBean.salvar}"
-						update=":formCadastro:painel :formListagem:tabela :formListagem:tool :formListagem:messages"
+						actionListener="#{etapaBean.salvar}"
+						update=":formCadastro:painel :formListagem:tabela :formListagem:tool"
 						onstart="PF('iconeDeProcessamento').show()"
 						onsuccess="PF('iconeDeProcessamento').hide()" />
 

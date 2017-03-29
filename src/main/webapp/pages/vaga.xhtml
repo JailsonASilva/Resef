@@ -97,10 +97,9 @@
 					value="#{vagaBean.vagas}"
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 					var="vaga" rows="10" paginatorPosition="bottom">
-					
-					<p:ajax event="rowDblselect"
-						listener="#{vagaBean.duploClique}" 
-						update="formCadastro:painel" />					
+
+					<p:ajax event="rowDblselect" listener="#{vagaBean.duploClique}"
+						update="formCadastro:painel" />
 
 					<p:ajax event="rowUnselect"
 						update=":formListagem:messages :formListagem:tool"
@@ -146,11 +145,6 @@
 							<f:actionListener
 								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 						</p:commandButton>
-
-						<p:commandButton icon="fa fa-fw fa-users"
-							title="Listar Currículos Cadastrados">
-
-						</p:commandButton>
 					</p:column>
 				</p:dataTable>
 
@@ -180,6 +174,23 @@
 					<p:inputText id="nome" maxlength="100" size="43" required="true"
 						requiredMessage="Campo Obrigatório" value="#{vagaBean.vaga.nome}" />
 
+					<p:outputLabel for="etapa" value="Etapa Inicial" />
+					<h:panelGroup>
+						<p:selectOneMenu id="etapa" filter="true"
+							value="#{vagaBean.vaga.etapaInicial}" required="true"
+							requiredMessage="O campo 'Etapa Inicial' é obrigatório"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItem noSelectionOption="true"
+								itemLabel="Nenhum Registro Selecionado" />
+							<f:selectItems value="#{vagaBean.etapas}" var="etapa"
+								itemValue="#{etapa}" itemLabel="#{etapa.nome}" />
+						</p:selectOneMenu>
+
+						<p:commandButton icon="ui-icon-document"
+							style="display: inline-block; vertical-align: top;"
+							title="Novo Etapa" oncomplete="PF('dialogoEtapa').show();" />
+					</h:panelGroup>
+
 					<p:outputLabel for="dataInicial" value="Data Inicial" />
 					<p:calendar id="dataInicial" mask="99/99/99" required="true"
 						showOn="button" requiredMessage="Campo Obrigatório!"
@@ -191,6 +202,12 @@
 						showOn="button" requiredMessage="Campo Obrigatório!"
 						yearRange="1900:2222" value="#{vagaBean.vaga.dataFinal}" size="12"
 						locale="pt_BR" showButtonPanel="true" navigator="true" />
+
+					<p:outputLabel for="dataResultado" value="Resultado 1º Etapa" />
+					<p:calendar id="dataResultado" mask="99/99/99" required="true"
+						showOn="button" requiredMessage="Campo Obrigatório!"
+						yearRange="1900:2222" value="#{vagaBean.vaga.dataResultadoEtapa}"
+						size="12" locale="pt_BR" showButtonPanel="true" navigator="true" />
 
 					<p:outputLabel for="ativo" value="Ativo" />
 					<p:selectBooleanCheckbox id="ativo" value="#{vagaBean.vaga.ativo}"
@@ -306,6 +323,49 @@
 							title="Novo Perfil" oncomplete="PF('dialogoPerfil').show();" />
 					</h:panelGroup>
 
+					<p:outputLabel for="funcao" value="Função" />
+					<p:inputTextarea id="funcao" rows="3" cols="65" required="true"
+						requiredMessage="Campo Obrigatório!" counter="display"
+						maxlength="2000" counterTemplate="{0} caracteres restantes."
+						autoResize="false" value="#{vagaBean.vagaPerfil.funcao}" />
+					<br></br>
+					<h:outputText id="display" />
+
+					<p:outputLabel for="desejavel" value="Desejável" />
+					<p:inputTextarea id="desejavel" rows="3" cols="65" required="true"
+						requiredMessage="Campo Obrigatório!" counter="displayDes"
+						maxlength="2000" counterTemplate="{0} caracteres restantes."
+						autoResize="false" value="#{vagaBean.vagaPerfil.desejavel}" />
+					<br></br>
+					<h:outputText id="displayDes" />
+
+					<p:outputLabel for="requisito" value="Requisitos" />
+					<p:inputTextarea id="requisito" rows="3" cols="65" required="true"
+						requiredMessage="Campo Obrigatório!" counter="displayReq"
+						maxlength="2000" counterTemplate="{0} caracteres restantes."
+						autoResize="false" value="#{vagaBean.vagaPerfil.requisitos}" />
+					<br></br>
+					<h:outputText id="displayReq" />
+
+					<p:outputLabel for="quantidade" value="Nº de Vagas" />
+					<p:inputText id="quantidade" maxlength="5" size="10"
+						value="#{vagaBean.vagaPerfil.quantidadeVaga}" required="true"
+						requiredMessage="O campo 'Quantidade' é obrigatório"
+						converterMessage="Informe um valor válido para o campo 'Quantidade'"
+						validatorMessage="Informe um valor entre 0 e 1000 para o campo 'Quantidade'">
+						<f:validateLongRange minimum="0" maximum="1000" />
+					</p:inputText>
+
+					<p:outputLabel for="renumeracao" value="Renumeração" />
+					<p:inputText id="renumeracao" maxlength="7" size="10"
+						value="#{vagaBean.vagaPerfil.renumeracao}" required="true"
+						requiredMessage="O campo 'Renumeração' é obrigatório"
+						converterMessage="Informe um valor válido para o campo 'Preço''"
+						validatorMessage="Informe um valor entre 0,00 e 999999,99 para o campo 'Preço'">
+						<f:validateDoubleRange minimum="0.00" maximum="999999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</p:inputText>
+
 					<p:outputLabel for="ativo" value="Ativo" />
 					<p:selectBooleanCheckbox id="ativo"
 						value="#{vagaBean.vagaPerfil.ativo}" required="true"
@@ -318,7 +378,7 @@
 				<h:panelGrid columns="3">
 					<p:commandButton value="Salvar" icon="ui-icon-disk"
 						actionListener="#{vagaBean.salvarVagaPerfil}"
-						update=":formCadastroPerfil:painel :formListagemVagaPerfil:tabela"
+						update=":formVinculo:painel :formListagemVagaPerfil:tabela formListagem:messages"
 						onstart="PF('iconeDeProcessamento').show()"
 						onsuccess="PF('iconeDeProcessamento').hide()" />
 
@@ -352,6 +412,31 @@
 
 					<p:commandButton value="Fechar" icon="fa fa-fw fa-close"
 						oncomplete="PF('dialogoPerfil').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Cadastro de Etapa" widgetVar="dialogoEtapa"
+			draggable="false" resizable="false" closable="true">
+			<h:form id="formCadastroEtapa">
+				<h:panelGrid id="painel" columns="2" class="ui-noborder">
+					<p:outputLabel for="nome" value="Nome " />
+					<p:inputText id="nome" maxlength="100" size="43" required="true"
+						requiredMessage="Campo Obrigatório" value="#{vagaBean.etapa.nome}" />
+				</h:panelGrid>
+
+				<br></br>
+				<p:separator />
+
+				<h:panelGrid columns="3">
+					<p:commandButton value="Salvar" icon="ui-icon-disk"
+						actionListener="#{vagaBean.salvarEtapa}"
+						update=":formCadastroEtapa:painel :formCadastro:etapa"
+						onstart="PF('iconeDeProcessamento').show()"
+						onsuccess="PF('iconeDeProcessamento').hide()" />
+
+					<p:commandButton value="Fechar" icon="fa fa-fw fa-close"
+						oncomplete="PF('dialogoEtapa').hide();" />
 				</h:panelGrid>
 			</h:form>
 		</p:dialog>

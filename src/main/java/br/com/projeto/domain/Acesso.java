@@ -25,7 +25,10 @@ public class Acesso extends GenericDomain {
 
 	@Column(nullable = true)
 	private Boolean curriculo;
-	
+
+	@Column(nullable = true)
+	private Boolean etapa;
+
 	public String getNome() {
 		return nome;
 	}
@@ -72,6 +75,14 @@ public class Acesso extends GenericDomain {
 
 	public void setCurriculo(Boolean curriculo) {
 		this.curriculo = curriculo;
+	}
+
+	public Boolean getEtapa() {
+		return etapa;
+	}
+
+	public void setEtapa(Boolean etapa) {
+		this.etapa = etapa;
 	}
 
 }

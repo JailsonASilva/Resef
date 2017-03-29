@@ -49,8 +49,7 @@ public class AutenticacaoBean {
 				return;
 			}
 
-			Faces.redirect("./pages/modelo.xhtml");
-			//Faces.redirect("./pages/principal.xhtml");
+			Faces.redirect("./pages/curriculoVaga.xhtml");
 
 		} catch (IOException erro) {
 			erro.printStackTrace();
@@ -61,7 +60,7 @@ public class AutenticacaoBean {
 	public void desconectar() {
 		try {
 			usuario = new Usuario();
-			usuarioLogado = null;			
+			usuarioLogado = null;
 
 			Faces.redirect("./pages/autenticacao.xhtml");
 

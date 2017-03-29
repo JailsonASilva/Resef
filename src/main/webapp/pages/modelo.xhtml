@@ -6,7 +6,7 @@
 	xmlns:p="http://primefaces.org/ui">
 <h:head>
 	<meta charset="UTF-8" />
-	<title><ui:insert name="titulo">Resef - Recrutamento e Seleção</ui:insert></title>
+	<title><ui:insert name="titulo">RESEF - Recrutamento e Seleção</ui:insert></title>
 	<h:outputStylesheet library="algaworks" name="estilo.css" />
 	<h:outputStylesheet library="webjars" name="/css/font-awesome.min.css" />
 	<h:outputScript library="js" name="scripts.js" />
@@ -17,11 +17,12 @@
 
 	<div>
 		<p:layout fullPage="true">
-			<p:layoutUnit position="north" size="47" resizable="true">
+			<p:layoutUnit position="north" size="82" resizable="true"
+				header="Seja Bem-Vindo ao Sistema de Recrutamento e Seleção Facema - RESEF">
 
 				<h:form>
 					<p:menubar style="border:none;">
-						<p:submenu label="Sistemas" icon="fa fa fw fa-user">
+						<p:submenu label="Sistemas" icon="fa fa fw fa-wrench">
 							<p:menuitem value="Acessos" url="/pages/acesso.xhtml"
 								rendered="#{autenticacaoBean.usuarioLogado.acesso.acesso}" />
 
@@ -36,8 +37,16 @@
 							<p:menuitem value="Perfil Profissional" url="/pages/perfil.xhtml"
 								rendered="#{autenticacaoBean.usuarioLogado.acesso.perfil}" />
 
+							<p:menuitem value="Etapa" url="/pages/etapa.xhtml"
+								rendered="#{autenticacaoBean.usuarioLogado.acesso.etapa}" />
+
 							<p:menuitem value="Vaga" url="/pages/vaga.xhtml"
 								rendered="#{autenticacaoBean.usuarioLogado.acesso.vaga}" />
+
+						</p:submenu>
+
+						<p:submenu label="Rotinas" icon="fa fa fw fa-toggle-right">
+
 						</p:submenu>
 
 						<f:facet name="options">
@@ -55,7 +64,7 @@
 
 							<p:commandButton value="Desconectar"
 								actionListener="#{autenticacaoBean.desconectar}"
-								icon="ui-icon-extlink" />
+								icon="fa fa fw fa-sign-out" />
 						</f:facet>
 
 					</p:menubar>

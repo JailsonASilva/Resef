@@ -177,7 +177,7 @@
 					<p:layoutUnit position="center" style="border:none;">
 						<p:wizard widgetVar="wiz" style="border:none;" nextLabel="Avançar"
 							backLabel="Voltar">
-							<p:tab title="Dados Pessoais">
+							<p:tab title="Dados Pessoais" >
 								<br></br>
 
 								<h:panelGrid id="pnDadosPessoais" columns="2"
@@ -413,7 +413,7 @@
 									class="ui-noborder">
 
 									<p:outputLabel for="objetivo" value="Obejtivo Profissional" />
-									<p:inputTextarea id="objetivo" rows="6" cols="140"
+									<p:inputTextarea id="objetivo" rows="4" cols="140"
 										required="true" requiredMessage="Campo Obrigatório!"
 										counter="display" maxlength="2000"
 										counterTemplate="{0} caracteres restantes." autoResize="false"
@@ -422,14 +422,66 @@
 
 									<br></br>
 
-									<p:outputLabel for="perfil" value="Perfil Profissional" />
-									<p:inputTextarea id="perfil" rows="6" cols="140"
-										required="true" requiredMessage="Campo Obrigatório!"
-										counter="displayPerfil" maxlength="2000"
-										counterTemplate="{0} caracteres restantes." autoResize="false"
-										value="#{curriculoBean.curriculo.perfilProfissional}" />
-									<h:outputText id="displayPerfil" />
+									<p:toolbar id="toolPerfil">
+										<f:facet name="left">
+											<p:commandButton value="Novo Perfil"
+												oncomplete="PF('dialogoPerfil').show();"
+												icon="ui-icon-document" update=":formPerfil:painel"
+												actionListener="#{curriculoBean.novoPerfil}">
+												<f:actionListener
+													type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+											</p:commandButton>
+										</f:facet>
+									</p:toolbar>
 
+									<p:dataTable var="curriculoPerfil"
+										emptyMessage="Nenhum registro encontrado."
+										selectionMode="single" rows="3" paginatorPosition="bottom"
+										selection="#{curriculoBean.curriculoPerfil}"
+										rowKey="#{curriculoPerfil.codigo}" paginator="true"
+										paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+										rowsPerPageTemplate="5,10,20,30,40,50,100,150,200,250,300,350,400,450,500,1000"
+										id="tabelaPerfil" value="#{curriculoBean.curriculoPerfis}">
+
+										<p:ajax event="rowDblselect"
+											listener="#{curriculoBean.duploCliquePerfil}"
+											update="formPerfil:painel" />
+
+										<p:column headerText="Perfil"
+											sortBy="#{curriculoPerfil.perfil.nome}">
+											<h:outputText value="#{curriculoPerfil.perfil.nome}" />
+										</p:column>
+
+										<p:column headerText="Opções" width="70"
+											style="text-align:center">
+
+											<p:commandButton title="Editar"
+												actionListener="#{curriculoBean.editarCurriculoPerfil}"
+												update="formPerfil:painel"
+												onstart="PF('iconeDeProcessamento').show()"
+												onsuccess="PF('iconeDeProcessamento').hide()"
+												icon="fa fa-fw fa-edit"
+												oncomplete="PF('dialogoPerfil').show();">
+												<f:attribute name="curriculoPerfilSelecionado"
+													value="#{curriculoPerfil}" />
+												<f:actionListener
+													type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+											</p:commandButton>
+
+											<p:commandButton title="Excluir" icon="ui-icon-trash"
+												actionListener="#{curriculoBean.excluirCurriculoPerfil}"
+												update=":formCadastro:tabelaPerfil :formListagem:messages"
+												onstart="PF('iconeDeProcessamento').show()"
+												onsuccess="PF('iconeDeProcessamento').hide()">
+												<f:attribute name="curriculoPerfilSelecionado"
+													value="#{curriculoPerfil}" />
+												<p:confirm header="Confirmação"
+													message="Deseja Excluir este Registro?"
+													icon="ui-icon-alert" />
+											</p:commandButton>
+
+										</p:column>
+									</p:dataTable>
 								</h:panelGrid>
 							</p:tab>
 
@@ -603,8 +655,6 @@
 									</p:column>
 
 								</p:dataTable>
-
-
 							</p:tab>
 
 							<p:tab title="Experiências Profissionais">
@@ -975,59 +1025,34 @@
 			</h:form>
 		</p:dialog>
 
-		<p:dialog header="Referências Pessoais" widgetVar="dialogoPessoal"
+		<p:dialog header="Perfil Profissional" widgetVar="dialogoPerfil"
 			draggable="false" modal="true" appendTo="@(body)" resizable="false"
 			closable="true">
-			<h:form id="formPessoal">
+			<h:form id="formPerfil">
 
 				<h:panelGrid id="painel" columns="2" class="ui-noborder">
-
-					<p:outputLabel for="nome" value="Nome" />
-					<p:inputText id="nome" maxlength="100" size="50" required="true"
-						requiredMessage="Campo Obrigatório"
-						value="#{curriculoBean.curriculoPessoal.nome}" />
-
-					<p:outputLabel for="fone" value="Fone" />
-					<p:inputMask id="fone"
-						value="#{curriculoBean.curriculoPessoal.fone}" size="25"
-						mask="(99)99999-9999" />
-
-					<p:outputLabel for="grau" value="Grau Parentesco" />
-					<p:selectOneMenu id="grau" filter="true"
-						value="#{curriculoBean.curriculoPessoal.grauParentesco}"
-						required="true"
-						requiredMessage="O campo 'Grau Parentesco' é obrigatório"
+					<p:selectOneMenu id="perfil" filter="true"
+						value="#{curriculoBean.curriculoPerfil.perfil}" required="true"
+						requiredMessage="O campo 'Perfil' é obrigatório"
 						converter="omnifaces.SelectItemsConverter">
-						<f:selectItem noSelectionOption="true" itemLabel="Não Selecionado" />
-
-						<f:selectItem itemValue="Amigo(a)" itemLabel="Amigo(a)" />
-						<f:selectItem itemValue="Avó" itemLabel="Avó" />
-						<f:selectItem itemValue="Avô" itemLabel="Avô" />
-						<f:selectItem itemValue="Cunhado(a)" itemLabel="Cunhado(a)" />
-						<f:selectItem itemValue="Genro" itemLabel="Genro" />
-						<f:selectItem itemValue="Irmão(a)" itemLabel="Irmão(a)" />
-						<f:selectItem itemValue="Mãe" itemLabel="Mãe" />
-						<f:selectItem itemValue="Nora" itemLabel="Nora" />
-						<f:selectItem itemValue="Pai" itemLabel="Pai" />
-						<f:selectItem itemValue="Primo(a)" itemLabel="Primo(a)" />
-						<f:selectItem itemValue="Sogra(a)" itemLabel="Sogra(a)" />
-						<f:selectItem itemValue="Tio(a)" itemLabel="Tio(a)" />
-						<f:selectItem itemValue="Outros" itemLabel="Outros" />
+						<f:selectItem noSelectionOption="true"
+							itemLabel="Nenhum Registro Selecionado" />
+						<f:selectItems value="#{curriculoBean.perfis}" var="perfil"
+							itemValue="#{perfil}" itemLabel="#{perfil.nome}" />
 					</p:selectOneMenu>
-
 				</h:panelGrid>
 
 				<p:separator />
 
 				<h:panelGrid columns="3">
 					<p:commandButton value="Salvar" icon="ui-icon-disk"
-						actionListener="#{curriculoBean.salvarCurriculoPessoal}"
-						update=":formPessoal:painel formCadastro:tabelaPessoal :formListagem:messages"
+						actionListener="#{curriculoBean.salvarCurriculoPerfil}"
+						update=":formPerfil:painel formCadastro:tabelaPerfil :formListagem:messages"
 						onstart="PF('iconeDeProcessamento').show()"
 						onsuccess="PF('iconeDeProcessamento').hide()" />
 
 					<p:commandButton value="Fechar" icon="fa fa-fw fa-close"
-						oncomplete="PF('dialogoPessoal').hide();" />
+						oncomplete="PF('dialogoPerfil').hide();" />
 				</h:panelGrid>
 
 			</h:form>
